@@ -1,0 +1,14 @@
+$ node src/main.ts "I want to travel next month" --scenario happy --today 2026-10-05
+> I want to travel next month
+  scenario happy, today 2026-10-05
+
+[1] parser      ok          1 ms  read input  added parsed = {"date":"2026-11"}
+[2] validator   needs_clarification     0 ms  read v1  missing = ["destination","type"]  question = "Where to, and flight or hotel?"
+
+step   agent       |0 ms                                2 ms|
+   1   parser      |                    ====================|     1 ms  ok
+   2   validator   |                                       =|     0 ms  needs_clarification
+total 2 ms (sum of agents 1 ms)
+
+Need more information (destination, type): Where to, and flight or hotel?
+[exit code 2]

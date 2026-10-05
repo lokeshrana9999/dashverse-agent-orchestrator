@@ -1,0 +1,28 @@
+$ node src/main.ts "Book a hotel in Paris next Friday" --scenario happy --today 2026-10-05
+> Book a hotel in Paris next Friday
+  scenario happy, today 2026-10-05
+
+[1] parser      ok          2 ms  read input  added parsed = {"type":"hotel","destination":"Paris","date":"2026-10-09"}
+[2] validator   ok          0 ms  read v1  added request = {"destination":"Paris","date":"2026-10-09","type":"hotel","origin":"NYC"}
+[3] running A, B, C in parallel (timeout 1000 ms each, 1 retry on error, need 1)
+[3] B           ok        182 ms  attempt 1/2  read v2  added results.B = {"provider":"B","name":"Hilton","price":240}
+[3] C           ok        260 ms  attempt 1/2  read v2  added results.C = {"provider":"C","name":"Marriott","price":270}
+[3] A           ok        324 ms  attempt 1/2  read v2  added results.A = {"provider":"A","name":"Park Hyatt","price":310}
+[4] aggregator  ok          0 ms  read v3  added best = {"provider":"B","ranked":[{"provider":"B","name":"Hilton","price":240},{"provider":"C","name":"Marriott","price":270},{"provider":"A","name":"Park Hyatt","price":310}]}
+[5] formatter   ok          1 ms  read v4  added reply = "I found 3 hotels in Paris on Oct 9. Best: Hilton $240/night\n  B  Hilton      $240/night  <- best\n  C  Marriott    $270/night  +$30\n  A  Park Hyatt  $310/night  +$70"
+
+step   agent       |0 ms                              328 ms|
+   1   parser      |=                                       |     2 ms  ok
+   2   validator   |=                                       |     0 ms  ok
+   3 / A           |========================================|   324 ms  ok
+   3 | B           |=======================                 |   182 ms  ok
+   3 \ C           |================================        |   260 ms  ok
+   4   aggregator  |                                       =|     0 ms  ok
+   5   formatter   |                                       =|     1 ms  ok
+total 328 ms (sum of agents 769 ms) - group 3 ran in parallel
+
+I found 3 hotels in Paris on Oct 9. Best: Hilton $240/night
+  B  Hilton      $240/night  <- best
+  C  Marriott    $270/night  +$30
+  A  Park Hyatt  $310/night  +$70
+[exit code 0]

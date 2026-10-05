@@ -1,0 +1,22 @@
+$ node src/main.ts "Book a flight to Tokyo for December 1st" --scenario all-fail --today 2026-10-05
+> Book a flight to Tokyo for December 1st
+  scenario all-fail, today 2026-10-05
+
+[1] parser      ok          2 ms  read input  added parsed = {"type":"flight","destination":"Tokyo","date":"2026-12-01"}
+[2] validator   ok          0 ms  read v1  added request = {"destination":"Tokyo","date":"2026-12-01","type":"flight","origin":"NYC"}
+[3] running A, B, C in parallel (timeout 1000 ms each, 1 retry on error, need 1)
+[3] C           error     522 ms  attempt 2/2  read v2  provider C answered 503 Service Unavailable
+[3] A           error     647 ms  attempt 2/2  read v2  provider A answered 503 Service Unavailable
+[3] B           timeout  1008 ms  attempt 1/2  read v2  no answer within 1000 ms
+chain stopped at step 3: Couldn't reach any flight provider (A: error, B: timeout, C: error). Please try again.
+
+step   agent       |0 ms                             1012 ms|
+   1   parser      |=                                       |     2 ms  ok
+   2   validator   |=                                       |     0 ms  ok
+   3 / A           |==========================              |   647 ms  error
+   3 | B           |========================================|  1008 ms  timeout
+   3 \ C           |=====================                   |   522 ms  error
+total 1012 ms (sum of agents 2179 ms) - group 3 ran in parallel
+
+Error: Couldn't reach any flight provider (A: error, B: timeout, C: error). Please try again.
+[exit code 1]

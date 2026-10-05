@@ -1,0 +1,357 @@
+{
+  "input": {
+    "text": "Book a flight to Tokyo for December 1st"
+  },
+  "versions": [
+    {
+      "text": "Book a flight to Tokyo for December 1st",
+      "parsed": {
+        "type": "flight",
+        "destination": "Tokyo",
+        "date": "2026-12-01"
+      }
+    },
+    {
+      "text": "Book a flight to Tokyo for December 1st",
+      "parsed": {
+        "type": "flight",
+        "destination": "Tokyo",
+        "date": "2026-12-01"
+      },
+      "request": {
+        "destination": "Tokyo",
+        "date": "2026-12-01",
+        "type": "flight",
+        "origin": "NYC"
+      }
+    },
+    {
+      "text": "Book a flight to Tokyo for December 1st",
+      "parsed": {
+        "type": "flight",
+        "destination": "Tokyo",
+        "date": "2026-12-01"
+      },
+      "request": {
+        "destination": "Tokyo",
+        "date": "2026-12-01",
+        "type": "flight",
+        "origin": "NYC"
+      },
+      "results": {
+        "A": {
+          "provider": "A",
+          "name": "Air France",
+          "price": 450,
+          "durationMin": 450,
+          "stops": 0
+        },
+        "B": {
+          "provider": "B",
+          "name": "Delta",
+          "price": 520,
+          "durationMin": 410,
+          "stops": 0
+        },
+        "C": {
+          "provider": "C",
+          "name": "United",
+          "price": 480,
+          "durationMin": 550,
+          "stops": 1
+        }
+      }
+    },
+    {
+      "text": "Book a flight to Tokyo for December 1st",
+      "parsed": {
+        "type": "flight",
+        "destination": "Tokyo",
+        "date": "2026-12-01"
+      },
+      "request": {
+        "destination": "Tokyo",
+        "date": "2026-12-01",
+        "type": "flight",
+        "origin": "NYC"
+      },
+      "results": {
+        "A": {
+          "provider": "A",
+          "name": "Air France",
+          "price": 450,
+          "durationMin": 450,
+          "stops": 0
+        },
+        "B": {
+          "provider": "B",
+          "name": "Delta",
+          "price": 520,
+          "durationMin": 410,
+          "stops": 0
+        },
+        "C": {
+          "provider": "C",
+          "name": "United",
+          "price": 480,
+          "durationMin": 550,
+          "stops": 1
+        }
+      },
+      "best": {
+        "provider": "A",
+        "ranked": [
+          {
+            "provider": "A",
+            "name": "Air France",
+            "price": 450,
+            "durationMin": 450,
+            "stops": 0
+          },
+          {
+            "provider": "C",
+            "name": "United",
+            "price": 480,
+            "durationMin": 550,
+            "stops": 1
+          },
+          {
+            "provider": "B",
+            "name": "Delta",
+            "price": 520,
+            "durationMin": 410,
+            "stops": 0
+          }
+        ]
+      }
+    },
+    {
+      "text": "Book a flight to Tokyo for December 1st",
+      "parsed": {
+        "type": "flight",
+        "destination": "Tokyo",
+        "date": "2026-12-01"
+      },
+      "request": {
+        "destination": "Tokyo",
+        "date": "2026-12-01",
+        "type": "flight",
+        "origin": "NYC"
+      },
+      "results": {
+        "A": {
+          "provider": "A",
+          "name": "Air France",
+          "price": 450,
+          "durationMin": 450,
+          "stops": 0
+        },
+        "B": {
+          "provider": "B",
+          "name": "Delta",
+          "price": 520,
+          "durationMin": 410,
+          "stops": 0
+        },
+        "C": {
+          "provider": "C",
+          "name": "United",
+          "price": 480,
+          "durationMin": 550,
+          "stops": 1
+        }
+      },
+      "best": {
+        "provider": "A",
+        "ranked": [
+          {
+            "provider": "A",
+            "name": "Air France",
+            "price": 450,
+            "durationMin": 450,
+            "stops": 0
+          },
+          {
+            "provider": "C",
+            "name": "United",
+            "price": 480,
+            "durationMin": 550,
+            "stops": 1
+          },
+          {
+            "provider": "B",
+            "name": "Delta",
+            "price": 520,
+            "durationMin": 410,
+            "stops": 0
+          }
+        ]
+      },
+      "reply": "I found 3 flights to Tokyo on Dec 1. Best: Air France $450 (7h 30m, direct)\n  A  Air France  $450  7h 30m  direct  <- best\n  C  United      $480  9h 10m  1 stop  +$30\n  B  Delta       $520  6h 50m  direct  +$70"
+    }
+  ],
+  "entries": [
+    {
+      "agent": "parser",
+      "step": 1,
+      "startMs": 0,
+      "endMs": 2,
+      "status": "ok",
+      "attempts": 1,
+      "inputVersion": 0,
+      "added": [
+        "parsed"
+      ],
+      "output": {
+        "parsed": {
+          "type": "flight",
+          "destination": "Tokyo",
+          "date": "2026-12-01"
+        }
+      }
+    },
+    {
+      "agent": "validator",
+      "step": 2,
+      "startMs": 3,
+      "endMs": 3,
+      "status": "ok",
+      "attempts": 1,
+      "inputVersion": 1,
+      "added": [
+        "request"
+      ],
+      "output": {
+        "request": {
+          "destination": "Tokyo",
+          "date": "2026-12-01",
+          "type": "flight",
+          "origin": "NYC"
+        }
+      }
+    },
+    {
+      "agent": "A",
+      "step": 3,
+      "group": 3,
+      "startMs": 3,
+      "endMs": 336,
+      "status": "ok",
+      "attempts": 1,
+      "inputVersion": 2,
+      "added": [
+        "results.A"
+      ],
+      "output": {
+        "results.A": {
+          "provider": "A",
+          "name": "Air France",
+          "price": 450,
+          "durationMin": 450,
+          "stops": 0
+        }
+      }
+    },
+    {
+      "agent": "B",
+      "step": 3,
+      "group": 3,
+      "startMs": 3,
+      "endMs": 194,
+      "status": "ok",
+      "attempts": 1,
+      "inputVersion": 2,
+      "added": [
+        "results.B"
+      ],
+      "output": {
+        "results.B": {
+          "provider": "B",
+          "name": "Delta",
+          "price": 520,
+          "durationMin": 410,
+          "stops": 0
+        }
+      }
+    },
+    {
+      "agent": "C",
+      "step": 3,
+      "group": 3,
+      "startMs": 3,
+      "endMs": 256,
+      "status": "ok",
+      "attempts": 1,
+      "inputVersion": 2,
+      "added": [
+        "results.C"
+      ],
+      "output": {
+        "results.C": {
+          "provider": "C",
+          "name": "United",
+          "price": 480,
+          "durationMin": 550,
+          "stops": 1
+        }
+      }
+    },
+    {
+      "agent": "aggregator",
+      "step": 4,
+      "startMs": 336,
+      "endMs": 336,
+      "status": "ok",
+      "attempts": 1,
+      "inputVersion": 3,
+      "added": [
+        "best"
+      ],
+      "output": {
+        "best": {
+          "provider": "A",
+          "ranked": [
+            {
+              "provider": "A",
+              "name": "Air France",
+              "price": 450,
+              "durationMin": 450,
+              "stops": 0
+            },
+            {
+              "provider": "C",
+              "name": "United",
+              "price": 480,
+              "durationMin": 550,
+              "stops": 1
+            },
+            {
+              "provider": "B",
+              "name": "Delta",
+              "price": 520,
+              "durationMin": 410,
+              "stops": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "agent": "formatter",
+      "step": 5,
+      "startMs": 336,
+      "endMs": 337,
+      "status": "ok",
+      "attempts": 1,
+      "inputVersion": 4,
+      "added": [
+        "reply"
+      ],
+      "output": {
+        "reply": "I found 3 flights to Tokyo on Dec 1. Best: Air France $450 (7h 30m, direct)\n  A  Air France  $450  7h 30m  direct  <- best\n  C  United      $480  9h 10m  1 stop  +$30\n  B  Delta       $520  6h 50m  direct  +$70"
+      }
+    }
+  ],
+  "totalMs": 337,
+  "sumMs": 780
+}

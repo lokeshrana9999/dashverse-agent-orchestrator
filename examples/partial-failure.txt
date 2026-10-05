@@ -1,0 +1,28 @@
+$ node src/main.ts "Book a flight to Tokyo for December 1st" --scenario partial-failure --today 2026-10-05
+> Book a flight to Tokyo for December 1st
+  scenario partial-failure, today 2026-10-05
+
+[1] parser      ok          2 ms  read input  added parsed = {"type":"flight","destination":"Tokyo","date":"2026-12-01"}
+[2] validator   ok          0 ms  read v1  added request = {"destination":"Tokyo","date":"2026-12-01","type":"flight","origin":"NYC"}
+[3] running A, B, C in parallel (timeout 1000 ms each, 1 retry on error, need 1)
+[3] B           ok        186 ms  attempt 1/2  read v2  added results.B = {"provider":"B","name":"Delta","price":520,"durationMin":410,"stops":0}
+[3] A           ok        327 ms  attempt 1/2  read v2  added results.A = {"provider":"A","name":"Air France","price":450,"durationMin":450,"stops":0}
+[3] C           timeout  1001 ms  attempt 1/2  read v2  no answer within 1000 ms
+[4] aggregator  ok          0 ms  read v3  added best = {"provider":"A","ranked":[{"provider":"A","name":"Air France","price":450,"durationMin":450,"stops":0},{"provider":"B","name":"Delta","price":520,"durationMin":410,"stops":0}]}
+[5] formatter   ok          0 ms  read v4  added reply = "I found 2 flights to Tokyo on Dec 1. Best: Air France $450 (7h 30m, direct)\n  A  Air France  $450  7h 30m  direct  <- best\n  B  Delta       $520  6h 50m  direct  +$70\nNote: Provider C didn't respond (timeout)"
+
+step   agent       |0 ms                             1005 ms|
+   1   parser      |=                                       |     2 ms  ok
+   2   validator   |=                                       |     0 ms  ok
+   3 / A           |=============                           |   327 ms  ok
+   3 | B           |========                                |   186 ms  ok
+   3 \ C           |========================================|  1001 ms  timeout
+   4   aggregator  |                                       =|     0 ms  ok
+   5   formatter   |                                       =|     0 ms  ok
+total 1005 ms (sum of agents 1516 ms) - group 3 ran in parallel
+
+I found 2 flights to Tokyo on Dec 1. Best: Air France $450 (7h 30m, direct)
+  A  Air France  $450  7h 30m  direct  <- best
+  B  Delta       $520  6h 50m  direct  +$70
+Note: Provider C didn't respond (timeout)
+[exit code 0]
