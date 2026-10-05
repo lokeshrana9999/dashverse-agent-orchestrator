@@ -225,8 +225,12 @@ async function runWithDeadline<C extends Context>(
         });
       }
 
-      const detail = result.status === "error" ? result.error : `asked for clarification: ${result.question}`;
-      if (attempts > retries || controller.signal.aborted) return fail("error", detail);
+      // Only an `error` is retried. A provider asking for clarification fails at
+      // once: asking again with the same input would get the same question.
+      if (result.status === "needs_clarification") {
+        return fail("error", `asked for clarification: ${result.question}`);
+      }
+      if (attempts > retries || controller.signal.aborted) return fail("error", result.error);
     }
   } finally {
     cancelDeadline();

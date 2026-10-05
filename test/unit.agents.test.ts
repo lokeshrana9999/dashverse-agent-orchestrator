@@ -162,3 +162,31 @@ describe("AC-11 formatter", () => {
     assert.equal(lines[0], "I found 3 hotels in Paris on Oct 9. Best: Hilton $240/night");
   });
 });
+
+describe("REV review fixes: flights with missing details", () => {
+  test("REV-3 a flight without duration and stops shows '-' in aligned columns", async () => {
+    const lines = await format(TOKYO_DEC_1, {
+      ...offers("flight", ["A"]),
+      D: { provider: "D", name: "Budget", price: 520 },
+    });
+    assert.deepEqual(lines, [
+      "I found 2 flights to Tokyo on Dec 1. Best: Air France $450 (7h 30m, direct)",
+      "  A  Air France  $450  7h 30m  direct  <- best",
+      "  D  Budget      $520  -       -       +$70",
+    ]);
+    const [best, other] = lines.slice(1);
+    assert.equal(other.indexOf("-  "), best.indexOf("7h 30m"));
+    assert.equal(other.indexOf("+$70"), best.indexOf("<- best"));
+    assert.ok(!other.includes("direct"), other);
+  });
+
+  test("REV-3b the summary leaves out details the best flight lacks", async () => {
+    const lines = await format(TOKYO_DEC_1, {
+      D: { provider: "D", name: "Budget", price: 400, durationMin: 600 },
+      E: { provider: "E", name: "Cheap", price: 300 },
+    });
+    assert.equal(lines[0], "I found 2 flights to Tokyo on Dec 1. Best: Cheap $300");
+    assert.equal(lines[1], "  E  Cheap   $300  -       -  <- best");
+    assert.equal(lines[2], "  D  Budget  $400  10h 0m  -  +$100");
+  });
+});

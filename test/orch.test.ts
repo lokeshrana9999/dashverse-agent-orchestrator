@@ -230,3 +230,42 @@ describe("AC-7 retry inside the deadline (P1, P2)", () => {
     assert.equal(result.trace.entries[0].attempts, 1);
   });
 });
+
+describe("REV review fixes: parallel results other than ok and error", () => {
+  test("REV-1 parallel clarification is not retried", async () => {
+    const asking = stub("A", { clarify: { missing: ["x"], question: "which airport?" } });
+    const result = await runChain([parallel([asking, provider("B")], { ...OPTIONS, retries: 1 })], {});
+    assert.equal(result.status, "ok");
+    assert.equal(asking.calls, 1);
+    assert.equal(resultsOf(result).A.failed, "error");
+    assert.match(resultsOf(result).A.detail, /asked for clarification/);
+    assert.match(resultsOf(result).A.detail, /which airport\?/);
+    assert.equal(result.trace.entries[0].attempts, 1);
+  });
+
+  test("REV-2a a parallel ok without its slot fails as error and is not a success", async () => {
+    const empty = stub("A");
+    const withOther = await runChain([parallel([empty, provider("B")], OPTIONS)], {});
+    assert.equal(withOther.status, "ok");
+    assert.equal(resultsOf(withOther).A.failed, "error");
+    assert.match(resultsOf(withOther).A.detail, /returned no results\./);
+
+    const after = stub("aggregator");
+    const alone = await runChain([parallel([stub("A")], { ...OPTIONS, minSuccesses: 1 }), step(after)], {});
+    assert.equal(alone.status, "error");
+    assert.ok(alone.status === "error");
+    assert.match(alone.error, /only 0 of 1 parallel agents succeeded; 1 needed/);
+    assert.equal(alone.trace.entries[0].status, "error");
+    assert.match(alone.trace.entries[0].error ?? "", /returned no results\./);
+    assert.equal(after.calls, 0);
+  });
+
+  test("REV-2b a parallel agent that throws is retried like an error and can succeed", async () => {
+    const crashy = stub("A", [{ throws: "socket reset" }, { slot: "offer A" }]);
+    const result = await runChain([parallel([crashy], { ...OPTIONS, retries: 1 })], {});
+    assert.equal(result.status, "ok");
+    assert.equal(resultsOf(result).A, "offer A");
+    assert.equal(result.trace.entries[0].attempts, 2);
+    assert.equal(crashy.calls, 2);
+  });
+});

@@ -50,11 +50,15 @@ function formatPrice(price: number, type: TravelType): string {
   return type === "hotel" ? `$${price}/night` : `$${price}`;
 }
 
-/** `"Air France $450 (7h 30m, direct)"` or `"Hilton $240/night"`. */
+/** `"Air France $450 (7h 30m, direct)"` or `"Hilton $240/night"`. Missing details are left out. */
 function describeOffer(offer: Offer, type: TravelType): string {
   const price = `${offer.name} ${formatPrice(offer.price, type)}`;
-  if (type === "hotel" || offer.durationMin === undefined) return price;
-  return `${price} (${formatDuration(offer.durationMin)}, ${formatStops(offer.stops ?? 0)})`;
+  if (type === "hotel") return price;
+  const details = [
+    offer.durationMin === undefined ? undefined : formatDuration(offer.durationMin),
+    offer.stops === undefined ? undefined : formatStops(offer.stops),
+  ].filter((detail) => detail !== undefined);
+  return details.length === 0 ? price : `${price} (${details.join(", ")})`;
 }
 
 /** `"I found 3 flights to Tokyo on Dec 1. Best: Air France $450 (7h 30m, direct)"`. */
@@ -67,18 +71,30 @@ export function summaryLine(request: TravelRequest, count: number, best: Offer):
   );
 }
 
-/** One aligned row per offer, best first, each marked best or with its gap to the best. */
+/** Shown in a flight row's duration or stops column when the provider didn't say. */
+const UNKNOWN = "-";
+
+/**
+ * One aligned row per offer, best first, each marked best or with its gap to
+ * the best. Every flight row has the duration and stops columns, `-` when unknown.
+ */
 export function comparisonRows(ranked: readonly Offer[], type: TravelType): string[] {
   const best = ranked[0];
   const cells = ranked.map((offer) => {
     const details =
-      type === "flight" && offer.durationMin !== undefined
-        ? [formatDuration(offer.durationMin), formatStops(offer.stops ?? 0)]
+      type === "flight"
+        ? [
+            offer.durationMin === undefined ? UNKNOWN : formatDuration(offer.durationMin),
+            offer.stops === undefined ? UNKNOWN : formatStops(offer.stops),
+          ]
         : [];
     const mark = offer === best ? BEST_MARK : `+$${offer.price - best.price}`;
     return [offer.provider, offer.name, formatPrice(offer.price, type), ...details, mark];
   });
-  const widths = cells[0].map((_, column) => Math.max(...cells.map((row) => row[column].length)));
+  const columns = Math.max(...cells.map((row) => row.length));
+  const widths = Array.from({ length: columns }, (_, column) =>
+    Math.max(...cells.map((row) => row[column]?.length ?? 0)),
+  );
   return cells.map((row) =>
     `  ${row.map((cell, column) => (column === row.length - 1 ? cell : cell.padEnd(widths[column]))).join("  ")}`,
   );
